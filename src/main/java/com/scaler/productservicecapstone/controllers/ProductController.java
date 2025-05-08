@@ -1,20 +1,25 @@
 package com.scaler.productservicecapstone.controllers;
 
+import com.scaler.productservicecapstone.dtos.CreateFakeStoreProductRequestDto;
 import com.scaler.productservicecapstone.dtos.ErrorDto;
 import com.scaler.productservicecapstone.dtos.ProductResponseDto;
 import com.scaler.productservicecapstone.exceptions.ProductNotFoundException;
 import com.scaler.productservicecapstone.models.Product;
 import com.scaler.productservicecapstone.services.ProductService;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
+    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -24,6 +29,24 @@ public class ProductController {
         Product product = productService.getProductById(id);
 
         return ProductResponseDto.from(product);
+    }
+
+    @GetMapping("/products")
+    public List<ProductResponseDto> getAllProducts() throws ProductNotFoundException {
+        List<Product> products = productService.getAllProducts();
+        return products.stream().map(ProductResponseDto::from).collect(Collectors.toList());
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto) {
+        Product product = productService.createProduct(
+                createFakeStoreProductRequestDto.getName(),
+                createFakeStoreProductRequestDto.getDescription(),
+                createFakeStoreProductRequestDto.getPrice(),
+                createFakeStoreProductRequestDto.getCategory(),
+                createFakeStoreProductRequestDto.getImageUrl()
+        );
+        return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.CREATED);
     }
 
 //    @ExceptionHandler(NullPointerException.class)

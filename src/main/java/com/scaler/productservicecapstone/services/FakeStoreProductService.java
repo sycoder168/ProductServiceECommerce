@@ -1,10 +1,15 @@
 package com.scaler.productservicecapstone.services;
 
+import com.scaler.productservicecapstone.dtos.CreateFakeStoreProductRequestDto;
+import com.scaler.productservicecapstone.dtos.FakeStoreRequestDto;
 import com.scaler.productservicecapstone.dtos.FakeStoreResponseDto;
 import com.scaler.productservicecapstone.exceptions.ProductNotFoundException;
 import com.scaler.productservicecapstone.models.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FakeStoreProductService implements ProductService {
@@ -28,4 +33,44 @@ public class FakeStoreProductService implements ProductService {
 
         return fakeStoreResponseDto.toProduct();
     }
+
+    @Override
+    public List<Product> getAllProducts() throws ProductNotFoundException {
+        FakeStoreResponseDto[] fakeStoreResponseDtos = restTemplate.getForObject(
+                "https://fakestoreapi.com/products/",
+                FakeStoreResponseDto[].class
+        );
+
+        if (fakeStoreResponseDtos == null) {
+            throw new ProductNotFoundException("There are no products in the store");
+        }
+
+        List<Product> products = new ArrayList<>();
+        for (FakeStoreResponseDto fakeStoreResponseDto : fakeStoreResponseDtos) {
+            products.add(fakeStoreResponseDto.toProduct());
+        }
+
+        return products;
+    }
+
+    @Override
+    public Product createProduct(String name, String description, double price, String category, String imageUrl) {
+        FakeStoreRequestDto fakeStoreRequestDto = createDtoFromParams(name, description, price, category, imageUrl);
+
+        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject("https://fakestoreapi.com/products/", fakeStoreRequestDto, FakeStoreResponseDto.class);
+
+        return fakeStoreResponseDto.toProduct();
+
+    }
+
+    private FakeStoreRequestDto createDtoFromParams(String name, String description, double price, String category, String imageUrl) {
+        FakeStoreRequestDto fakeStoreRequestDto = new FakeStoreRequestDto();
+        fakeStoreRequestDto.setTitle(name);
+        fakeStoreRequestDto.setDescription(description);
+        fakeStoreRequestDto.setPrice(price);
+        fakeStoreRequestDto.setCategory(category);
+        fakeStoreRequestDto.setImage(imageUrl);
+        return fakeStoreRequestDto;
+    }
+
 }
