@@ -1,10 +1,10 @@
 package com.scaler.productservicecapstone.services;
 
-import com.scaler.productservicecapstone.dtos.CreateFakeStoreProductRequestDto;
 import com.scaler.productservicecapstone.dtos.FakeStoreRequestDto;
 import com.scaler.productservicecapstone.dtos.FakeStoreResponseDto;
 import com.scaler.productservicecapstone.exceptions.ProductNotFoundException;
 import com.scaler.productservicecapstone.models.Product;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,6 +60,27 @@ public class FakeStoreProductService implements ProductService {
         FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject("https://fakestoreapi.com/products/", fakeStoreRequestDto, FakeStoreResponseDto.class);
 
         return fakeStoreResponseDto.toProduct();
+
+    }
+
+    @Override
+    public Product udpateProduct(long id, String name, String description, double price, String category, String imageUrl) throws ProductNotFoundException {
+        FakeStoreRequestDto updatedFakeStoreRequestDto = createDtoFromParams(name, description, price, category, imageUrl);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<FakeStoreRequestDto> entity = new HttpEntity<>(updatedFakeStoreRequestDto, headers);
+
+        ResponseEntity<FakeStoreResponseDto> responseEntity = restTemplate.exchange(
+                "https://fakestoreapi.com/products/{id}",
+                HttpMethod.PUT,
+                entity,
+                FakeStoreResponseDto.class,
+                id
+        );
+
+        return responseEntity.getBody().toProduct();
 
     }
 

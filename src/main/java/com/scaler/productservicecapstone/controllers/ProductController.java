@@ -49,11 +49,18 @@ public class ProductController {
         return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.CREATED);
     }
 
-//    @ExceptionHandler(NullPointerException.class)
-//    public ErrorDto handleNullPointerException() {
-//        ErrorDto errorDto = new ErrorDto();
-//        errorDto.setMessage("Product cannot be null");
-//        errorDto.setStatus("Failure");
-//        return errorDto;
-//    }
+    @PutMapping("/products/{id}")
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable long id, @RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto) throws ProductNotFoundException {
+        Product product = productService.udpateProduct(
+                id,
+                createFakeStoreProductRequestDto.getName(),
+                createFakeStoreProductRequestDto.getDescription(),
+                createFakeStoreProductRequestDto.getPrice(),
+                createFakeStoreProductRequestDto.getCategory(),
+                createFakeStoreProductRequestDto.getImageUrl()
+        );
+
+        return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.OK);
+
+    }
 }
