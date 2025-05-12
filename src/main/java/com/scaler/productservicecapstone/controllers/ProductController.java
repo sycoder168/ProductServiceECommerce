@@ -1,12 +1,12 @@
 package com.scaler.productservicecapstone.controllers;
 
 import com.scaler.productservicecapstone.dtos.CreateFakeStoreProductRequestDto;
-import com.scaler.productservicecapstone.dtos.ErrorDto;
 import com.scaler.productservicecapstone.dtos.ProductResponseDto;
 import com.scaler.productservicecapstone.exceptions.ProductNotFoundException;
 import com.scaler.productservicecapstone.models.Product;
 import com.scaler.productservicecapstone.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ public class ProductController {
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(@Qualifier("productDbService") ProductService productService) {
         this.productService = productService;
     }
 
@@ -51,7 +51,7 @@ public class ProductController {
 
     @PutMapping("/products/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable long id, @RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto) throws ProductNotFoundException {
-        Product product = productService.udpateProduct(
+        Product product = productService.replaceProduct(
                 id,
                 createFakeStoreProductRequestDto.getName(),
                 createFakeStoreProductRequestDto.getDescription(),

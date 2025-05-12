@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService {
 
     RestTemplate restTemplate;
@@ -64,7 +64,7 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public Product udpateProduct(long id, String name, String description, double price, String category, String imageUrl) throws ProductNotFoundException {
+    public Product replaceProduct(long id, String name, String description, double price, String category, String imageUrl) throws ProductNotFoundException {
         FakeStoreRequestDto updatedFakeStoreRequestDto = createDtoFromParams(name, description, price, category, imageUrl);
 
         HttpHeaders headers = new HttpHeaders();

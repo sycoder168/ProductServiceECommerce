@@ -10,5 +10,5 @@ public interface ProductService {
     Product getProductById(long id) throws ProductNotFoundException;
     List<Product> getAllProducts() throws ProductNotFoundException;
     Product createProduct(String name, String description, double price, String category, String imageUrl);
-    Product udpateProduct(long id, String name, String description, double price, String category, String imageUrl) throws ProductNotFoundException;
+    Product replaceProduct(long id, String name, String description, double price, String category, String imageUrl) throws ProductNotFoundException;
 }
