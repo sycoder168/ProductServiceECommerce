@@ -15,6 +15,8 @@ public class ProductResponseDto {
     private String imageUrl;
 
     public static ProductResponseDto from(Product product) {
+        if (product == null) return null;
+
         ProductResponseDto dto = new ProductResponseDto();
 
         dto.setId(product.getId());

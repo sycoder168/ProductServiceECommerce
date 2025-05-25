@@ -57,7 +57,7 @@ public class FakeStoreProductService implements ProductService {
     public Product createProduct(String name, String description, double price, String category, String imageUrl) {
         FakeStoreRequestDto fakeStoreRequestDto = createDtoFromParams(name, description, price, category, imageUrl);
 
-        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject("https://fakestoreapi.com/products/", fakeStoreRequestDto, FakeStoreResponseDto.class);
+        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject("https://fakestoreapi.com/products", fakeStoreRequestDto, FakeStoreResponseDto.class);
 
         return fakeStoreResponseDto.toProduct();
 
