@@ -63,4 +63,26 @@ public class ProductController {
         return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.OK);
 
     }
+
+
+    @PostMapping("/products/batch")
+    public ResponseEntity<List<ProductResponseDto>> createMultipleProducts(
+            @RequestBody List<CreateFakeStoreProductRequestDto> productDtos) {
+
+        List<Product> createdProducts = productDtos.stream()
+                .map(dto -> productService.createProduct(
+                        dto.getName(),
+                        dto.getDescription(),
+                        dto.getPrice(),
+                        dto.getCategory(),
+                        dto.getImageUrl()
+                ))
+                .toList();
+
+        List<ProductResponseDto> responseDtos = createdProducts.stream()
+                .map(ProductResponseDto::from)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(responseDtos, HttpStatus.CREATED);
+    }
 }
